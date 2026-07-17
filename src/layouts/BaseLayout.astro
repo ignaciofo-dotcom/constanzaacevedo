@@ -7,6 +7,7 @@ import { site } from '@config/site';
 import { localeTag, ogLocale, defaultLang, type Lang } from '@i18n/config';
 import { useTranslations } from '@i18n/utils';
 import type { HreflangAlt } from '@lib/urls';
+import { withBase, isPreview } from '@lib/base';
 import { businessNode, personNode, websiteNode } from '@lib/schema';
 
 interface Props {
@@ -34,7 +35,9 @@ const {
 const t = useTranslations(lang);
 const siteUrl = Astro.site?.origin ?? 'https://constanzaacevedo.es';
 const canonical = new URL(Astro.url.pathname, siteUrl).href;
-const ogImageUrl = new URL(ogImage ?? '/og/default.png', siteUrl).href;
+const ogImageUrl = new URL(withBase(ogImage ?? '/og/default.png'), siteUrl).href;
+// El preview bajo subdirectorio (GitHub Pages) no debe indexarse.
+const robotsNoindex = noindex || isPreview;
 
 const graph = [
   businessNode(siteUrl),
@@ -53,7 +56,7 @@ const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {robotsNoindex && <meta name="robots" content="noindex, nofollow" />}
 
     <!-- hreflang recíproco + x-default → ES (PLAN §7.2) -->
     {
@@ -85,8 +88,8 @@ const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
     <meta name="twitter:image" content={ogImageUrl} />
 
     <meta name="theme-color" content="#3f6446" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <link rel="sitemap" href={withBase('/sitemap-index.xml')} />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
   </head>

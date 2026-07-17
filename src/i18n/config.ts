@@ -2,6 +2,7 @@
  * i18n core (PLAN §5). ES en raíz (sin prefijo), CA en /ca/, EN en /en/.
  * Slugs traducidos por página, hreflang recíproco + x-default → ES.
  */
+import { withBase } from '@lib/base';
 
 export const languages = {
   es: 'Español',
@@ -39,8 +40,12 @@ export const ogLocale: Record<Lang, string> = {
  * Mapa de rutas por clave de página estable e independiente del idioma.
  * La clave es lo que referencian el nav, breadcrumbs, hreflang y (en Fase 2)
  * las citas. Los slugs de servicio adicionales viven en la colección `services`.
+ *
+ * `rawRoutes` son las rutas canónicas (dominio propio). `routes` las expone ya
+ * prefijadas con el base path → un solo lugar aplica el subdirectorio y todos
+ * los consumidores (nav, crumbs, hreflang, helpers) lo heredan.
  */
-export const routes = {
+const rawRoutes = {
   home: { es: '/', ca: '/ca/', en: '/en/' },
   about: { es: '/quien-soy', ca: '/ca/qui-soc', en: '/en/about' },
   services: { es: '/servicios', ca: '/ca/serveis', en: '/en/services' },
@@ -65,4 +70,14 @@ export const routes = {
   legal: { es: '/aviso-legal', ca: '/ca/avis-legal', en: '/en/legal-notice' },
 } as const;
 
-export type RouteKey = keyof typeof routes;
+export type RouteKey = keyof typeof rawRoutes;
+
+// Rutas ya prefijadas con el base path (identidad cuando BASE_URL === '/').
+export const routes = Object.fromEntries(
+  (Object.keys(rawRoutes) as RouteKey[]).map((key) => [
+    key,
+    Object.fromEntries(
+      (Object.keys(rawRoutes[key]) as Lang[]).map((lang) => [lang, withBase(rawRoutes[key][lang])])
+    ) as Record<Lang, string>,
+  ])
+) as Record<RouteKey, Record<Lang, string>>;

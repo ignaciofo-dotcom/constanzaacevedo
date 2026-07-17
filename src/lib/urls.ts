@@ -8,6 +8,7 @@ import {
   type RouteKey,
 } from '@i18n/config';
 import { localePrefix } from '@i18n/utils';
+import { withBase } from '@lib/base';
 
 /** URL de WhatsApp con mensaje precargado (PLAN §6). */
 export function whatsappUrl(message?: string): string {
@@ -26,7 +27,7 @@ export function emailUrl(subject?: string): string {
 
 /** Ruta absoluta de un servicio a partir de su slug (sin prefijo) e idioma. */
 export function serviceUrl(slug: string, lang: Lang): string {
-  return `${localePrefix(lang)}/${slug}`;
+  return withBase(`${localePrefix(lang)}/${slug}`);
 }
 
 /** Ruta de una guía. */

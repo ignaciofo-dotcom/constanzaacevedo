@@ -1,5 +1,6 @@
 ---
 import { forms } from '@config/forms';
+import { withBase } from '@lib/base';
 
 /**
  * Formulario de contacto estático con honeypot + validación nativa (PLAN §7.6).
@@ -46,7 +47,7 @@ import { forms } from '@config/forms';
   </div>
   <label class="flex items-start gap-2 text-sm text-[var(--color-ink-soft)]">
     <input type="checkbox" required class="mt-1" />
-    <span>He leído y acepto la <a href="/politica-privacidad">política de privacidad</a>.</span>
+    <span>He leído y acepto la <a href={withBase('/politica-privacidad')}>política de privacidad</a>.</span>
   </label>
   <button type="submit"
     class="justify-self-start rounded-full bg-[var(--color-accent-600)] px-6 py-3 font-bold text-white hover:bg-[var(--color-accent-700)]">
