@@ -1,0 +1,47 @@
+---
+import Icon from './Icon.astro';
+import { defaultLang, routes, type Lang } from '@i18n/config';
+import { useTranslations } from '@i18n/utils';
+import { whatsappUrl, telUrl } from '@lib/urls';
+
+/**
+ * Barra inferior fija en móvil con [WhatsApp] [Llamar] [Pedir cita]
+ * (PLAN §6: el conversor nº1 para este público). Oculta en ≥lg.
+ */
+interface Props {
+  lang?: Lang;
+  whatsappMessage?: string;
+}
+const { lang = defaultLang, whatsappMessage } = Astro.props;
+const t = useTranslations(lang);
+const wa = whatsappUrl(whatsappMessage ?? t('wa.default'));
+---
+
+<nav
+  aria-label={t('nav.book')}
+  class="fixed inset-x-0 bottom-0 z-40 grid grid-cols-3 border-t border-[var(--color-sand)] bg-[var(--color-paper)] shadow-[0_-4px_16px_-8px_rgba(42,35,32,0.3)] lg:hidden"
+>
+  <a
+    href={wa}
+    data-analytics="wa-click"
+    class="flex flex-col items-center gap-0.5 py-2.5 text-xs font-bold text-[var(--color-primary-700)] no-underline"
+  >
+    <Icon name="whatsapp" size={22} />
+    {t('cta.whatsapp')}
+  </a>
+  <a
+    href={telUrl()}
+    data-analytics="call-click"
+    class="flex flex-col items-center gap-0.5 border-x border-[var(--color-sand)] py-2.5 text-xs font-bold text-[var(--color-ink)] no-underline"
+  >
+    <Icon name="phone" size={22} />
+    {t('cta.call')}
+  </a>
+  <a
+    href={routes.book[lang]}
+    class="flex flex-col items-center gap-0.5 bg-[var(--color-accent-600)] py-2.5 text-xs font-bold text-white no-underline"
+  >
+    <Icon name="check" size={22} />
+    {t('cta.book')}
+  </a>
+</nav>

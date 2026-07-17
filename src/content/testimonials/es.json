@@ -1,0 +1,23 @@
+{
+  "lang": "es",
+  "items": [
+    {
+      "text": "[INPUT: reseña real de Google Business Profile o Doctoralia, con permiso — familia de fisioterapia pediátrica. JAMÁS inventar.]",
+      "author": "[INPUT] · Nombre I.",
+      "audience": "child",
+      "source": "Google"
+    },
+    {
+      "text": "[INPUT: reseña real — fisioterapia respiratoria infantil.]",
+      "author": "[INPUT] · Nombre I.",
+      "audience": "child",
+      "source": "Google"
+    },
+    {
+      "text": "[INPUT: reseña real — acupuntura de la mujer (fertilidad/embarazo/menopausia).]",
+      "author": "[INPUT] · Nombre I.",
+      "audience": "woman",
+      "source": "Doctoralia"
+    }
+  ]
+}

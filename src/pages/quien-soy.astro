@@ -1,0 +1,96 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+import CtaWhatsApp from '@components/CtaWhatsApp.astro';
+import Icon from '@components/Icon.astro';
+import { site } from '@config/site';
+import { routes } from '@i18n/config';
+import { useTranslations } from '@i18n/utils';
+import { hreflangForRoute } from '@lib/urls';
+import { breadcrumbNode } from '@lib/schema';
+
+const lang = 'es' as const;
+const t = useTranslations(lang);
+const alternates = hreflangForRoute('about');
+const siteUrl = Astro.site?.origin ?? 'https://constanzaacevedo.es';
+
+const crumbs = [
+  { name: t('breadcrumb.home'), href: routes.home[lang] },
+  { name: t('nav.about'), href: routes.about[lang] },
+];
+
+const credentials = [
+  'Fisioterapeuta — U. Nacional Andrés Bello (Chile, 2010)',
+  'Experto Universitario en Fisioterapia Pediátrica — Fisiofocus (España)',
+  'Acupuntura y Medicina Tradicional China — Escuela Internacional de MTCH (Chile)',
+  'Diplomado en Fertilidad, Embarazo y RN en MTC — Küme Kimün',
+  'Auriculoterapia MTC',
+  'Consejería en Lactancia Materna — Comunidad de la Leche / LEAARC',
+  'Diplomado en Rehabilitación Cardiovascular — U. del Desarrollo',
+];
+---
+
+<BaseLayout
+  title="Quién soy — Constanza Acevedo, fisioterapeuta y acupuntora"
+  description="Constanza Acevedo, fisioterapeuta colegiada 18641 y acupuntora en Barcelona. +15 años de experiencia en pediatría, respiratoria y salud de la mujer."
+  lang={lang}
+  alternates={alternates}
+  schema={[breadcrumbNode(crumbs.map((c) => ({ name: c.name, url: new URL(c.href, siteUrl).href })))]}
+>
+  <Breadcrumbs items={crumbs} />
+
+  <div class="container-page py-8">
+    <div class="grid items-start gap-10 md:grid-cols-[3fr_2fr]">
+      <div class="prose-content">
+        <h1 class="text-4xl">Hola, soy Constanza «Coty» Acevedo</h1>
+        <p>
+          Soy fisioterapeuta desde 2010 y acupuntora desde 2019, colegiada nº {site.person.collegiateNumber}
+          del Col·legi de Fisioterapeutes de Catalunya y acupuntora reconocida (nº {site.person.acupunctureNumber})
+          por los Fisioterapeutes Acupuntors del CFC. En más de 15 años he trabajado en atención primaria,
+          en el ámbito hospitalario y en desarrollo infantil.
+        </p>
+        <h2>Mi historia, desde el otro lado de la mesa</h2>
+        <p>
+          Soy mamá de Esteban y Bastián. Soy celíaca y uno de mis hijos tiene alergia a la proteína de la
+          leche de vaca. He vivido en primera persona la preocupación por la salud de un hijo y las consultas
+          en las que buscas respuestas. Esa experiencia —la empatía desde el otro lado de la mesa— es parte
+          de cómo acompaño a cada familia y a cada mujer que llega a mi consulta.
+        </p>
+        <h2>Mi filosofía</h2>
+        <p>
+          Trabajo la díada mamá-hijo en la rama pediátrica y acompaño a la mujer en su propio proceso en la
+          rama de acupuntura. Combino la evidencia científica con la Medicina Tradicional China, siempre con
+          honestidad sobre lo que cada abordaje puede y no puede aportar, y de forma coordinada con tu equipo
+          médico. Sin alarmismos y sin promesas imposibles.
+        </p>
+        <h2>Formación y credenciales</h2>
+        <ul>
+          {credentials.map((c) => <li>{c}</li>)}
+        </ul>
+        <p>
+          Puedes verificar mi colegiación en el
+          <a href="https://www.fisioterapeutes.cat/" target="_blank" rel="noopener"> Col·legi de Fisioterapeutes de Catalunya</a>
+          (nº {site.person.collegiateNumber}).
+        </p>
+      </div>
+
+      <aside class="md:sticky md:top-24">
+        <div class="aspect-[4/5] overflow-hidden rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-[var(--color-sand)]">
+          <div class="flex h-full items-center justify-center text-center text-sm text-[var(--color-ink-muted)]">
+            [INPUT] Foto de Constanza en consulta
+          </div>
+        </div>
+        <div class="mt-4 rounded-2xl border border-[var(--color-sand)] bg-[var(--color-primary-50)] p-5 text-sm">
+          <p class="flex items-center gap-2 font-bold text-[var(--color-primary-800)]">
+            <Icon name="check" size={18} /> Colegiada {site.person.collegiateNumber} · CFC
+          </p>
+          <p class="mt-2 text-[var(--color-ink-soft)]">
+            +{site.metrics.yearsExperience} años de experiencia · Atención en español, catalán e inglés.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <CtaWhatsApp message={t('wa.default')} lang={lang} />
+  </div>
+</BaseLayout>

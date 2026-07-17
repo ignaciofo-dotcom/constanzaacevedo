@@ -1,0 +1,42 @@
+---
+import Icon from './Icon.astro';
+import { defaultLang, type Lang } from '@i18n/config';
+import { useTranslations } from '@i18n/utils';
+
+interface Props {
+  href: string;
+  title: string;
+  summary: string;
+  icon?: string;
+  audience?: 'child' | 'woman';
+  id?: string;
+  lang?: Lang;
+}
+const { href, title, summary, icon = 'leaf', audience, id, lang = defaultLang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<article
+  id={id}
+  class="group flex h-full scroll-mt-24 flex-col rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-[var(--color-surface)] p-6 shadow-[var(--shadow-soft)] transition-transform duration-200 hover:-translate-y-1 motion-reduce:hover:translate-y-0"
+>
+  <span
+    class:list={[
+      'inline-flex h-12 w-12 items-center justify-center rounded-2xl',
+      audience === 'woman'
+        ? 'bg-[var(--color-accent-100)] text-[var(--color-accent-700)]'
+        : 'bg-[var(--color-primary-100)] text-[var(--color-primary-700)]',
+    ]}
+  >
+    <Icon name={icon} size={26} />
+  </span>
+  <h3 class="mt-4 text-xl">{title}</h3>
+  <p class="mt-2 flex-1 text-sm text-[var(--color-ink-soft)]">{summary}</p>
+  <a
+    href={href}
+    class="mt-4 inline-flex items-center gap-1 text-sm font-bold text-[var(--color-accent-600)] no-underline group-hover:gap-2"
+  >
+    {t('cta.seeMore')}
+    <Icon name="chevron" size={16} />
+  </a>
+</article>

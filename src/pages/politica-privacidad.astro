@@ -1,0 +1,37 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+import { site } from '@config/site';
+import { routes } from '@i18n/config';
+import { useTranslations } from '@i18n/utils';
+import { hreflangForRoute } from '@lib/urls';
+
+const lang = 'es' as const;
+const t = useTranslations(lang);
+const alternates = hreflangForRoute('privacy');
+const crumbs = [
+  { name: t('breadcrumb.home'), href: routes.home[lang] },
+  { name: t('footer.privacy'), href: routes.privacy[lang] },
+];
+---
+
+<BaseLayout title="Política de privacidad | Constanza Acevedo" description="Política de privacidad y protección de datos (RGPD) del sitio constanzaacevedo.es." lang={lang} alternates={alternates} noindex={true}>
+  <Breadcrumbs items={crumbs} />
+  <div class="container-page prose-content py-8">
+    <h1>Política de privacidad</h1>
+    <p>De acuerdo con el Reglamento (UE) 2016/679 (RGPD) y la LOPDGDD 3/2018, te informamos sobre el tratamiento de tus datos personales.</p>
+    <h2>Responsable del tratamiento</h2>
+    <p>{site.nap.legalName} · NIF {site.nap.taxId} · {site.contact.email}</p>
+    <h2>Finalidad</h2>
+    <p>Gestionar tus consultas y solicitudes de cita realizadas a través del formulario, WhatsApp, teléfono o email, y prestarte la atención profesional solicitada.</p>
+    <h2>Legitimación</h2>
+    <p>El consentimiento que nos otorgas al contactarnos y, en su caso, la ejecución de la relación asistencial. Los <strong>datos de salud</strong> son categoría especial (art. 9 RGPD) y se tratan con tu consentimiento explícito y las debidas garantías de confidencialidad.</p>
+    <h2>Conservación</h2>
+    <p>Los datos se conservarán mientras dure la relación y durante los plazos legales aplicables a la documentación clínica.</p>
+    <h2>Destinatarios</h2>
+    <p>No se ceden datos a terceros salvo obligación legal. Los formularios se procesan mediante un proveedor de envío de correo (encargado del tratamiento) con garantías conformes al RGPD.</p>
+    <h2>Derechos</h2>
+    <p>Puedes ejercer tus derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad escribiendo a {site.contact.email}. También puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es).</p>
+    <p class="text-sm text-[var(--color-ink-muted)]"><em>Plantilla orientativa — revisar y completar con asesoría legal. Traducir a CA y EN antes de publicar (§6.11).</em></p>
+  </div>
+</BaseLayout>

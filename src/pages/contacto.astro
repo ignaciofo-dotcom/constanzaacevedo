@@ -1,0 +1,86 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+import ContactForm from '@components/ContactForm.astro';
+import Icon from '@components/Icon.astro';
+import { site } from '@config/site';
+import { routes } from '@i18n/config';
+import { useTranslations } from '@i18n/utils';
+import { telUrl, emailUrl, whatsappUrl, hreflangForRoute } from '@lib/urls';
+import { breadcrumbNode } from '@lib/schema';
+
+const lang = 'es' as const;
+const t = useTranslations(lang);
+const alternates = hreflangForRoute('contact');
+const siteUrl = Astro.site?.origin ?? 'https://constanzaacevedo.es';
+const crumbs = [
+  { name: t('breadcrumb.home'), href: routes.home[lang] },
+  { name: t('nav.contact'), href: routes.contact[lang] },
+];
+---
+
+<BaseLayout
+  title="Contacto | Constanza Acevedo · Fisioterapia y acupuntura Barcelona"
+  description="Contacta con Constanza Acevedo en el Centro Llevadonas (Camp de l'Arpa, Barcelona). WhatsApp, teléfono, email y formulario. Domicilios en Barcelona."
+  lang={lang}
+  alternates={alternates}
+  schema={[breadcrumbNode(crumbs.map((c) => ({ name: c.name, url: new URL(c.href, siteUrl).href })))]}
+>
+  <Breadcrumbs items={crumbs} />
+
+  <div class="container-page grid gap-10 py-8 md:grid-cols-2">
+    <div>
+      <h1 class="text-4xl">Contacto</h1>
+      <p class="mt-3 text-[var(--color-ink-soft)]">
+        Escríbeme y te respondo lo antes posible. Para consultas urgentes de tu bebé, acude a tu
+        pediatra o a urgencias.
+      </p>
+
+      <ul class="mt-6 space-y-4 text-[var(--color-ink-soft)]">
+        <li class="flex items-start gap-3">
+          <Icon name="pin" size={22} class="mt-0.5 text-[var(--color-primary-600)]" />
+          <div>
+            <p class="font-semibold text-[var(--color-ink)]">Centro Llevadonas</p>
+            C. de la Independència 371, Baixos · 08026 Barcelona<br />Camp de l'Arpa · Sant Martí (metro Camp de l'Arpa, L2)
+            <br /><a href={site.nap.mapUrl} target="_blank" rel="noopener" data-analytics="map-click">Ver cómo llegar →</a>
+          </div>
+        </li>
+        <li class="flex items-start gap-3">
+          <Icon name="clock" size={22} class="mt-0.5 text-[var(--color-primary-600)]" />
+          <div>
+            <p class="font-semibold text-[var(--color-ink)]">{t('label.hours')}</p>
+            Lunes 16:00–20:30 · Viernes 10:00–13:00 · Domicilios a convenir
+          </div>
+        </li>
+        <li class="flex items-start gap-3">
+          <Icon name="whatsapp" size={22} class="mt-0.5 text-[var(--color-primary-600)]" />
+          <div>
+            <a href={whatsappUrl(t('wa.default'))} data-analytics="wa-click">WhatsApp {site.contact.whatsapp.display}</a>
+          </div>
+        </li>
+        <li class="flex items-start gap-3">
+          <Icon name="phone" size={22} class="mt-0.5 text-[var(--color-primary-600)]" />
+          <div><a href={telUrl()} data-analytics="call-click">{site.contact.phone.display}</a></div>
+        </li>
+        <li class="flex items-start gap-3">
+          <Icon name="mail" size={22} class="mt-0.5 text-[var(--color-primary-600)]" />
+          <div><a href={emailUrl()}>{site.contact.email}</a></div>
+        </li>
+      </ul>
+
+      <div class="mt-6 aspect-video overflow-hidden rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-[var(--color-sand)]">
+        <!-- Mapa con facade/click-to-load para no penalizar LCP (PLAN §6.1) -->
+        <a href={site.nap.mapUrl} target="_blank" rel="noopener" data-analytics="map-click"
+          class="flex h-full w-full flex-col items-center justify-center gap-2 text-center text-sm text-[var(--color-ink-muted)] no-underline">
+          <Icon name="pin" size={32} class="text-[var(--color-primary-600)]" />
+          Ver el Centro Llevadonas en Google Maps
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl">Escríbeme</h2>
+      <ContactForm />
+    </div>
+  </div>
+</BaseLayout>

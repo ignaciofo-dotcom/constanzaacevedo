@@ -1,0 +1,13 @@
+{
+  "key": "centro-llevadonas",
+  "type": "clinic",
+  "name": "Centro Llevadonas",
+  "street": "C. de la Independència 371, Baixos",
+  "postalCode": "08026",
+  "locality": "Barcelona",
+  "region": "Barcelona",
+  "geo": { "lat": 41.4116, "lng": 2.1855 },
+  "mapUrl": "https://maps.google.com/?q=Independència+371+Barcelona",
+  "areaServed": "Camp de l'Arpa · Sant Martí · Barcelona",
+  "primary": true
+}

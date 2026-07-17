@@ -1,0 +1,82 @@
+---
+import { forms } from '@config/forms';
+
+/**
+ * Formulario de contacto estático con honeypot + validación nativa (PLAN §7.6).
+ * Progresivamente mejorado: funciona como POST normal; con JS muestra estado
+ * sin recargar. Un solo punto de cambio de proveedor en `@config/forms`.
+ */
+---
+
+<form
+  id="contact-form"
+  action={forms.endpoint}
+  method="POST"
+  class="mt-6 grid gap-4"
+  data-analytics="form-submit"
+>
+  <input type="hidden" name="access_key" value={forms.accessKey} />
+  <input type="hidden" name="subject" value="Nuevo mensaje desde constanzaacevedo.es" />
+  <input type="hidden" name="from_name" value="Web Constanza Acevedo" />
+  <!-- honeypot anti-spam -->
+  <input type="checkbox" name="botcheck" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div>
+      <label for="name" class="block text-sm font-semibold">Nombre</label>
+      <input id="name" name="name" type="text" required autocomplete="name"
+        class="mt-1 w-full rounded-xl border border-[var(--color-sand)] bg-white px-4 py-2.5" />
+    </div>
+    <div>
+      <label for="phone" class="block text-sm font-semibold">Teléfono</label>
+      <input id="phone" name="phone" type="tel" autocomplete="tel"
+        class="mt-1 w-full rounded-xl border border-[var(--color-sand)] bg-white px-4 py-2.5" />
+    </div>
+  </div>
+  <div>
+    <label for="email" class="block text-sm font-semibold">Email</label>
+    <input id="email" name="email" type="email" required autocomplete="email"
+      class="mt-1 w-full rounded-xl border border-[var(--color-sand)] bg-white px-4 py-2.5" />
+  </div>
+  <div>
+    <label for="message" class="block text-sm font-semibold">¿En qué puedo ayudarte?</label>
+    <textarea id="message" name="message" rows="5" required
+      class="mt-1 w-full rounded-xl border border-[var(--color-sand)] bg-white px-4 py-2.5"
+      placeholder="Motivo de consulta y, si es para tu bebé, su edad."></textarea>
+  </div>
+  <label class="flex items-start gap-2 text-sm text-[var(--color-ink-soft)]">
+    <input type="checkbox" required class="mt-1" />
+    <span>He leído y acepto la <a href="/politica-privacidad">política de privacidad</a>.</span>
+  </label>
+  <button type="submit"
+    class="justify-self-start rounded-full bg-[var(--color-accent-600)] px-6 py-3 font-bold text-white hover:bg-[var(--color-accent-700)]">
+    Enviar mensaje
+  </button>
+  <p id="form-status" role="status" aria-live="polite" class="text-sm"></p>
+</form>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const status = document.getElementById('form-status');
+  if (form && status) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      status.textContent = 'Enviando…';
+      status.style.color = 'var(--color-ink-soft)';
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+        if (res.ok) {
+          form.reset();
+          status.textContent = '¡Gracias! Te responderé lo antes posible.';
+          status.style.color = 'var(--color-primary-700)';
+        } else {
+          throw new Error('bad response');
+        }
+      } catch {
+        status.textContent =
+          'No se pudo enviar. Escríbeme por WhatsApp o a contacto@constanzaacevedo.es.';
+        status.style.color = 'var(--color-accent-700)';
+      }
+    });
+  }
+</script>

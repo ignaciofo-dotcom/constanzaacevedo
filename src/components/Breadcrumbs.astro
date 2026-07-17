@@ -1,0 +1,32 @@
+---
+import Icon from './Icon.astro';
+
+/**
+ * Migas de pan visibles (PLAN §6). El schema BreadcrumbList lo emite la página.
+ */
+interface Props {
+  items: { name: string; href: string }[];
+}
+const { items } = Astro.props;
+---
+
+<nav aria-label="Breadcrumb" class="container-page pt-6">
+  <ol class="flex flex-wrap items-center gap-1 text-sm text-[var(--color-ink-muted)]">
+    {
+      items.map((item, i) => (
+        <li class="flex items-center gap-1">
+          {i > 0 && <Icon name="chevron" size={14} class="opacity-50" />}
+          {i < items.length - 1 ? (
+            <a href={item.href} class="no-underline hover:text-[var(--color-primary-700)]">
+              {item.name}
+            </a>
+          ) : (
+            <span aria-current="page" class="font-semibold text-[var(--color-ink-soft)]">
+              {item.name}
+            </span>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>

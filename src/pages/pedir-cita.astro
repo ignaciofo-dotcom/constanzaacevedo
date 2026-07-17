@@ -1,0 +1,90 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+import MetricStrip from '@components/MetricStrip.astro';
+import Icon from '@components/Icon.astro';
+import { site } from '@config/site';
+import { social } from '@config/social';
+import { routes } from '@i18n/config';
+import { useTranslations } from '@i18n/utils';
+import { whatsappUrl, telUrl, emailUrl, hreflangForRoute } from '@lib/urls';
+import { breadcrumbNode } from '@lib/schema';
+
+const lang = 'es' as const;
+const t = useTranslations(lang);
+const alternates = hreflangForRoute('book');
+const siteUrl = Astro.site?.origin ?? 'https://constanzaacevedo.es';
+const crumbs = [
+  { name: t('breadcrumb.home'), href: routes.home[lang] },
+  { name: t('nav.book'), href: routes.book[lang] },
+];
+const waMsg = 'Hola Constanza, me gustaría pedir cita. Motivo: … Edad del bebé (si aplica): …';
+---
+
+<BaseLayout
+  title="Pedir cita | Constanza Acevedo · Fisioterapia y acupuntura Barcelona"
+  description="Pide cita con Constanza Acevedo en Barcelona por WhatsApp, teléfono o email. Fisioterapia pediátrica, respiratoria y acupuntura para la mujer."
+  lang={lang}
+  alternates={alternates}
+  schema={[breadcrumbNode(crumbs.map((c) => ({ name: c.name, url: new URL(c.href, siteUrl).href })))]}
+>
+  <Breadcrumbs items={crumbs} />
+
+  <div class="container-page py-8">
+    <h1 class="text-4xl">Pedir cita</h1>
+    <p class="mt-3 max-w-2xl text-lg text-[var(--color-ink-soft)]">
+      La forma más rápida es por WhatsApp. Cuéntame el <strong>motivo de consulta</strong> y, si es para
+      tu bebé, su <strong>edad</strong>: así puedo orientarte mejor desde el primer mensaje.
+    </p>
+
+    <div class="mt-8 grid gap-5 md:grid-cols-3">
+      <a
+        href={whatsappUrl(waMsg)}
+        data-analytics="wa-click"
+        class="flex flex-col items-start rounded-[var(--radius-2xl)] border-2 border-[var(--color-primary-300)] bg-[var(--color-primary-50)] p-6 no-underline"
+      >
+        <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-primary-600)] text-white">
+          <Icon name="whatsapp" size={26} />
+        </span>
+        <h2 class="mt-4 text-xl">WhatsApp</h2>
+        <p class="mt-1 text-sm text-[var(--color-ink-soft)]">Respuesta más ágil. {site.contact.whatsapp.display}</p>
+        <span class="mt-4 rounded-full bg-[var(--color-accent-600)] px-5 py-2 text-sm font-bold text-white">Escribir ahora</span>
+      </a>
+
+      <a href={telUrl()} data-analytics="call-click" class="flex flex-col items-start rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-[var(--color-surface)] p-6 no-underline">
+        <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-primary-100)] text-[var(--color-primary-700)]">
+          <Icon name="phone" size={26} />
+        </span>
+        <h2 class="mt-4 text-xl">Teléfono</h2>
+        <p class="mt-1 text-sm text-[var(--color-ink-soft)]">{site.contact.phone.display}</p>
+        <span class="mt-4 text-sm font-bold text-[var(--color-accent-600)]">Llamar →</span>
+      </a>
+
+      <a href={emailUrl('Cita — ')} class="flex flex-col items-start rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-[var(--color-surface)] p-6 no-underline">
+        <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-primary-100)] text-[var(--color-primary-700)]">
+          <Icon name="mail" size={26} />
+        </span>
+        <h2 class="mt-4 text-xl">Email</h2>
+        <p class="mt-1 text-sm text-[var(--color-ink-soft)]">{site.contact.email}</p>
+        <span class="mt-4 text-sm font-bold text-[var(--color-accent-600)]">Escribir →</span>
+      </a>
+    </div>
+
+    {
+      social.doctoralia.url && (
+        <a href={social.doctoralia.url} target="_blank" rel="noopener" class="mt-5 inline-block font-bold text-[var(--color-accent-600)] no-underline">
+          Reservar en Doctoralia →
+        </a>
+      )
+    }
+    {
+      !social.doctoralia.url && (
+        <p class="mt-5 text-sm text-[var(--color-ink-muted)]">
+          [INPUT] Si hay reserva online en Doctoralia o Google, se añade aquí como 4.ª vía.
+        </p>
+      )
+    }
+  </div>
+
+  <div class="mt-10"><MetricStrip lang={lang} /></div>
+</BaseLayout>

@@ -1,0 +1,84 @@
+---
+import Icon from './Icon.astro';
+import LanguagePicker from './LanguagePicker.astro';
+import { site } from '@config/site';
+import { defaultLang, routes, type Lang } from '@i18n/config';
+import { useTranslations } from '@i18n/utils';
+import { normalizePath } from '@lib/urls';
+
+interface Props {
+  lang?: Lang;
+}
+const { lang = defaultLang } = Astro.props;
+const t = useTranslations(lang);
+const current = normalizePath(Astro.url.pathname);
+
+const nav = [
+  { href: routes.about[lang], label: t('nav.about') },
+  { href: routes.services[lang], label: t('nav.services') },
+  { href: routes.guides[lang], label: t('nav.guides') },
+  { href: routes.faq[lang], label: t('nav.faq') },
+  { href: routes.contact[lang], label: t('nav.contact') },
+];
+const isActive = (href: string) => normalizePath(href) === current;
+---
+
+<header class="sticky top-0 z-40 border-b border-[var(--color-sand)] bg-[var(--color-paper)]/95 backdrop-blur">
+  <div class="container-page flex items-center justify-between gap-4 py-3">
+    <a href={routes.home[lang]} class="flex items-center gap-2 font-[var(--font-display)] text-lg font-semibold text-[var(--color-primary-700)] no-underline">
+      <Icon name="leaf" size={26} />
+      <span>{site.brand}</span>
+    </a>
+
+    <nav aria-label="Principal" class="hidden items-center gap-6 lg:flex">
+      {
+        nav.map((item) => (
+          <a
+            href={item.href}
+            class="text-sm font-semibold text-[var(--color-ink-soft)] no-underline hover:text-[var(--color-primary-700)]"
+            aria-current={isActive(item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <LanguagePicker lang={lang} />
+      <a
+        href={routes.book[lang]}
+        class="hidden rounded-full bg-[var(--color-accent-600)] px-4 py-2 text-sm font-bold text-white no-underline hover:bg-[var(--color-accent-700)] sm:inline-block"
+      >
+        {t('nav.book')}
+      </a>
+
+      <details class="lg:hidden [&_summary::-webkit-details-marker]:hidden">
+        <summary
+          class="flex cursor-pointer list-none items-center rounded-lg p-1.5 text-[var(--color-ink)]"
+          aria-label={t('a11y.openMenu')}
+        >
+          <Icon name="menu" size={28} />
+        </summary>
+        <div class="absolute left-0 right-0 top-full border-b border-[var(--color-sand)] bg-[var(--color-paper)] shadow-[var(--shadow-soft)]">
+          <nav aria-label="Móvil" class="container-page flex flex-col py-2">
+            {
+              nav.map((item) => (
+                <a
+                  href={item.href}
+                  class="border-b border-[var(--color-sand)] py-3 font-semibold text-[var(--color-ink)] no-underline"
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                >
+                  {item.label}
+                </a>
+              ))
+            }
+            <a href={routes.book[lang]} class="py-3 font-bold text-[var(--color-accent-600)] no-underline">
+              {t('nav.book')}
+            </a>
+          </nav>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>

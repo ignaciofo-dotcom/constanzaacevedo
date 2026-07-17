@@ -1,0 +1,98 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+import Faq from '@components/Faq.astro';
+import CtaWhatsApp from '@components/CtaWhatsApp.astro';
+import { site } from '@config/site';
+import { routes } from '@i18n/config';
+import { useTranslations } from '@i18n/utils';
+import { getGuides, guideSlugMap } from '@lib/content';
+import { guideUrl, hreflangForPaths } from '@lib/urls';
+import { faqNode, breadcrumbNode } from '@lib/schema';
+
+const lang = 'es' as const;
+
+export async function getStaticPaths() {
+  const guides = await getGuides('es');
+  return guides.map((entry) => ({ params: { slug: entry.data.slug }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const t = useTranslations(lang);
+const { Content } = await render(entry);
+
+const stem = entry.id.replace(/\.(es|ca|en)$/, '');
+const alternates = hreflangForPaths(await guideSlugMap(stem));
+const siteUrl = Astro.site?.origin ?? 'https://constanzaacevedo.es';
+const pageUrl = new URL(guideUrl(entry.data.slug, lang), siteUrl).href;
+
+const crumbs = [
+  { name: t('breadcrumb.home'), href: routes.home[lang] },
+  { name: t('nav.guides'), href: routes.guides[lang] },
+  { name: entry.data.title, href: guideUrl(entry.data.slug, lang) },
+];
+const df = new Intl.DateTimeFormat('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const articleSchema = {
+  '@type': 'MedicalWebPage',
+  headline: entry.data.title,
+  description: entry.data.metaDescription,
+  url: pageUrl,
+  inLanguage: 'es-ES',
+  dateModified: entry.data.updatedDate.toISOString(),
+  author: { '@type': 'Person', name: site.person.name },
+  reviewedBy: { '@type': 'Person', name: site.person.name },
+  citation: entry.data.sources.map((s) => s.url),
+};
+const schema = [
+  articleSchema,
+  breadcrumbNode(crumbs.map((c) => ({ name: c.name, url: new URL(c.href, siteUrl).href }))),
+  ...(entry.data.faqs.length ? [faqNode(entry.data.faqs)] : []),
+];
+---
+
+<BaseLayout
+  title={entry.data.metaTitle}
+  description={entry.data.metaDescription}
+  lang={lang}
+  alternates={alternates}
+  schema={schema}
+  ogImage={`/og/guias/${entry.data.slug}.png`}
+>
+  <Breadcrumbs items={crumbs} />
+
+  <article class="container-page py-8">
+    <header class="prose-content">
+      <h1 class="text-4xl">{entry.data.title}</h1>
+      <p class="mt-2 text-sm text-[var(--color-ink-muted)]">
+        Revisado por {site.person.name}, fisioterapeuta col. {site.person.collegiateNumber} ·
+        Actualizada: {df.format(entry.data.updatedDate)}
+      </p>
+    </header>
+
+    <div class="prose-content mt-6">
+      <Content />
+    </div>
+
+    {
+      entry.data.sources.length > 0 && (
+        <section class="prose-content mt-10 rounded-2xl bg-[var(--color-sand)]/40 p-5 text-sm">
+          <h2 class="text-lg">Fuentes</h2>
+          <ul>
+            {entry.data.sources.map((s) => (
+              <li>
+                <a href={s.url} target="_blank" rel="noopener">
+                  {s.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <Faq items={entry.data.faqs} lang={lang} />
+    <CtaWhatsApp message={entry.data.whatsappMessage} lang={lang} />
+  </article>
+</BaseLayout>

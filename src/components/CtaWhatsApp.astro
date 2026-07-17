@@ -1,0 +1,36 @@
+---
+import Icon from './Icon.astro';
+import { defaultLang, type Lang } from '@i18n/config';
+import { useTranslations } from '@i18n/utils';
+import { whatsappUrl } from '@lib/urls';
+
+/**
+ * Bloque CTA de WhatsApp con mensaje precargado contextual (PLAN §6).
+ */
+interface Props {
+  message: string;
+  label?: string;
+  heading?: string;
+  text?: string;
+  lang?: Lang;
+}
+const { message, label, heading, text, lang = defaultLang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="mt-14">
+  <div class="rounded-[var(--radius-2xl)] bg-[var(--color-primary-700)] px-6 py-10 text-center text-white sm:px-10">
+    <h2 class="text-2xl text-white sm:text-3xl">{heading ?? t('cta.bookVisit')}</h2>
+    {text && <p class="mx-auto mt-3 max-w-xl text-[var(--color-primary-100)]">{text}</p>}
+    <div class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+      <a
+        href={whatsappUrl(message)}
+        data-analytics="wa-click"
+        class="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 font-bold text-[var(--color-primary-800)] no-underline hover:bg-[var(--color-cream)]"
+      >
+        <Icon name="whatsapp" size={22} />
+        {label ?? t('cta.whatsapp')}
+      </a>
+    </div>
+  </div>
+</section>

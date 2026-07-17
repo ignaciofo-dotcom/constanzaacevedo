@@ -1,0 +1,33 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+import { routes } from '@i18n/config';
+import { useTranslations } from '@i18n/utils';
+import { hreflangForRoute } from '@lib/urls';
+
+const lang = 'es' as const;
+const t = useTranslations(lang);
+const alternates = hreflangForRoute('cookies');
+const crumbs = [
+  { name: t('breadcrumb.home'), href: routes.home[lang] },
+  { name: t('footer.cookies'), href: routes.cookies[lang] },
+];
+---
+
+<BaseLayout title="Política de cookies | Constanza Acevedo" description="Información sobre el uso de cookies en el sitio constanzaacevedo.es." lang={lang} alternates={alternates} noindex={true}>
+  <Breadcrumbs items={crumbs} />
+  <div class="container-page prose-content py-8">
+    <h1>Política de cookies</h1>
+    <p>Este sitio es estático y, por defecto, <strong>no utiliza cookies de seguimiento</strong>. Únicamente podrían emplearse cookies técnicas imprescindibles para su funcionamiento.</p>
+    <h2>Analítica</h2>
+    <p>
+      [INPUT §7.7: decidir analítica. Opción A — Google Analytics 4 con Consent Mode v2 y banner de
+      consentimiento trilingüe (rechazar = no cargar GA). Opción B (recomendada si se prefiere sin
+      banner) — Cloudflare Web Analytics o Plausible, sin cookies personales. Actualizar esta página
+      según la opción elegida.]
+    </p>
+    <h2>Gestión</h2>
+    <p>Puedes configurar o bloquear las cookies desde tu navegador. Si se activa una herramienta de analítica con consentimiento, podrás cambiar tu elección desde el banner correspondiente.</p>
+    <p class="text-sm text-[var(--color-ink-muted)]"><em>Plantilla orientativa — completar según la decisión de analítica y traducir a CA y EN.</em></p>
+  </div>
+</BaseLayout>

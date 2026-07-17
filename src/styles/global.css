@@ -1,0 +1,172 @@
+@import 'tailwindcss';
+
+@import '@fontsource-variable/fraunces';
+@import '@fontsource-variable/nunito-sans';
+
+/*
+ * Design tokens (PLAN §9). Tailwind v4 CSS-first config.
+ * Paleta: base crema/blanco roto; primario verde salvia/eucalipto;
+ * acento terracota/coral suave para CTAs; texto casi-negro cálido.
+ * Todo con contraste WCAG 2.2 AA (≥4.5:1).
+ */
+@theme {
+  /* Fuentes self-hosted, máx. 2 familias */
+  --font-display: 'Fraunces Variable', ui-serif, Georgia, serif;
+  --font-body: 'Nunito Sans Variable', ui-sans-serif, system-ui, sans-serif;
+
+  /* Base crema / blanco roto */
+  --color-cream: #faf6f0;
+  --color-sand: #f2e9df;
+  --color-paper: #fffdfa;
+
+  /* Primario — verde salvia / eucalipto */
+  --color-primary-50: #f1f6f2;
+  --color-primary-100: #dce9dd;
+  --color-primary-200: #bcd4bf;
+  --color-primary-300: #94b899;
+  --color-primary-400: #6d9a74;
+  --color-primary-500: #517d58;
+  --color-primary-600: #3f6446; /* AA sobre crema */
+  --color-primary-700: #345239;
+  --color-primary-800: #2b4230;
+  --color-primary-900: #243728;
+
+  /* Acento — terracota / coral suave (CTAs) */
+  --color-accent-100: #f9e3db;
+  --color-accent-300: #eaa891;
+  --color-accent-400: #de8368;
+  --color-accent-500: #c9603f;
+  --color-accent-600: #b04d2f; /* AA sobre blanco para texto/enlaces */
+  --color-accent-700: #8f3d25;
+
+  /* Texto casi-negro cálido y grises */
+  --color-ink: #2a2320;
+  --color-ink-soft: #4c443f;
+  --color-ink-muted: #6b6259;
+
+  /* Semánticos */
+  --color-surface: var(--color-paper);
+  --color-bg: var(--color-cream);
+
+  /* Radios generosos, sombras suaves */
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.75rem;
+  --shadow-soft: 0 6px 24px -12px rgba(42, 35, 32, 0.25);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    line-height: 1.65;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    color: var(--color-ink);
+    line-height: 1.12;
+    text-wrap: balance;
+    font-weight: 560;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: var(--color-accent-600);
+  }
+
+  /* Focus visible AA en todos los interactivos */
+  :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+    outline: 3px solid var(--color-primary-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  .prose-content {
+    max-width: 44rem;
+  }
+  .prose-content h2 {
+    font-size: 1.6rem;
+    margin-top: 2.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .prose-content h3 {
+    font-size: 1.2rem;
+    margin-top: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+  .prose-content p,
+  .prose-content ul,
+  .prose-content ol,
+  .prose-content table {
+    margin-bottom: 1rem;
+  }
+  .prose-content ul {
+    list-style: disc;
+    padding-left: 1.4rem;
+  }
+  .prose-content ol {
+    list-style: decimal;
+    padding-left: 1.4rem;
+  }
+  .prose-content li {
+    margin-bottom: 0.35rem;
+  }
+  .prose-content a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .prose-content strong {
+    color: var(--color-ink);
+  }
+  .prose-content table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+  .prose-content th,
+  .prose-content td {
+    border: 1px solid var(--color-sand);
+    padding: 0.55rem 0.75rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  .prose-content thead th {
+    background: var(--color-primary-50);
+  }
+}

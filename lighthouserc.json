@@ -1,0 +1,23 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": "dist",
+      "url": [
+        "http://localhost/index.html",
+        "http://localhost/servicios/index.html",
+        "http://localhost/fisioterapia-respiratoria-infantil-barcelona/index.html",
+        "http://localhost/guias/bronquiolitis-bebe-que-hacer/index.html"
+      ],
+      "settings": { "preset": "desktop", "emulatedFormFactor": "mobile" }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": ["warn", { "minScore": 0.95 }],
+        "categories:accessibility": ["error", { "minScore": 0.95 }],
+        "categories:best-practices": ["warn", { "minScore": 0.95 }],
+        "categories:seo": ["error", { "minScore": 0.95 }]
+      }
+    },
+    "upload": { "target": "temporary-public-storage" }
+  }
+}

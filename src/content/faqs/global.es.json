@@ -1,0 +1,45 @@
+{
+  "lang": "es",
+  "items": [
+    {
+      "q": "¿Dónde pasas consulta?",
+      "a": "En el Centro Llevadonas, C. de la Independència 371 (Baixos), 08026 Barcelona, en el barrio de Camp de l'Arpa (Sant Martí). También realizo visitas a domicilio en Barcelona."
+    },
+    {
+      "q": "¿Qué horario tienes?",
+      "a": "Lunes de 16:00 a 20:30 y viernes de 10:00 a 13:00. Los domicilios se acuerdan según disponibilidad."
+    },
+    {
+      "q": "¿Necesito una derivación médica para la primera visita?",
+      "a": "No es imprescindible. Puedes contactarme directamente y en la primera valoración decidimos juntos el plan. Si ya tienes informes médicos, tráelos: ayudan a orientar el tratamiento."
+    },
+    {
+      "q": "¿Cuánto dura una sesión?",
+      "a": "[INPUT: confirmar duración] La primera valoración suele ser algo más larga que las sesiones de seguimiento."
+    },
+    {
+      "q": "¿Cuánto cuesta una sesión?",
+      "a": "[INPUT: ¿publicar tarifas? Recomendado: sí — «desde X €». Tarifas por servicio y del taller de masaje.]"
+    },
+    {
+      "q": "¿Trabajas con seguros médicos?",
+      "a": "[INPUT: confirmar si se trabaja con aseguradoras o solo privado.]"
+    },
+    {
+      "q": "¿Cómo pido cita?",
+      "a": "La vía más rápida es WhatsApp. También puedes llamar o escribir por email. En el mensaje, cuéntame la edad del bebé (si es fisioterapia pediátrica) y el motivo de consulta para agilizar."
+    },
+    {
+      "q": "¿Qué política de cancelación tienes?",
+      "a": "[INPUT: política de cancelación / antelación mínima.]"
+    },
+    {
+      "q": "¿Atiendes en catalán e inglés?",
+      "a": "Sí. La atención puede ser en español, catalán o inglés."
+    },
+    {
+      "q": "La acupuntura, ¿sustituye a mi tratamiento médico?",
+      "a": "No. La acupuntura es un complemento del seguimiento médico y ginecológico, nunca un sustituto. Trabajo de forma coordinada con tu equipo de salud."
+    }
+  ]
+}

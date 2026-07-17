@@ -1,0 +1,42 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Breadcrumbs from '@components/Breadcrumbs.astro';
+import { site } from '@config/site';
+import { routes } from '@i18n/config';
+import { useTranslations } from '@i18n/utils';
+import { hreflangForRoute } from '@lib/urls';
+
+const lang = 'es' as const;
+const t = useTranslations(lang);
+const alternates = hreflangForRoute('legal');
+const crumbs = [
+  { name: t('breadcrumb.home'), href: routes.home[lang] },
+  { name: t('footer.legal'), href: routes.legal[lang] },
+];
+---
+
+<BaseLayout title="Aviso legal | Constanza Acevedo" description="Aviso legal e información del titular del sitio constanzaacevedo.es conforme a la LSSI-CE." lang={lang} alternates={alternates} noindex={true}>
+  <Breadcrumbs items={crumbs} />
+  <div class="container-page prose-content py-8">
+    <h1>Aviso legal</h1>
+    <p>En cumplimiento de la Ley 34/2002 de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), se informa:</p>
+    <h2>Titular del sitio</h2>
+    <ul>
+      <li><strong>Titular:</strong> {site.nap.legalName}</li>
+      <li><strong>NIF:</strong> {site.nap.taxId}</li>
+      <li><strong>Domicilio profesional:</strong> {site.nap.location}, {site.nap.address.street}, {site.nap.address.postalCode} {site.nap.address.locality}</li>
+      <li><strong>Email:</strong> {site.contact.email}</li>
+      <li><strong>Actividad profesional:</strong> Fisioterapia y acupuntura. Colegiada nº {site.person.collegiateNumber} del Col·legi de Fisioterapeutes de Catalunya.</li>
+    </ul>
+    <p class="text-sm text-[var(--color-ink-muted)]">[INPUT: confirmar NIF y si el titular es persona autónoma o sociedad.]</p>
+    <h2>Objeto</h2>
+    <p>Este sitio tiene carácter informativo sobre los servicios profesionales de fisioterapia y acupuntura. La información publicada no sustituye el consejo, diagnóstico o tratamiento de un profesional sanitario.</p>
+    <h2>Propiedad intelectual</h2>
+    <p>Los contenidos, textos, fotografías y diseño de este sitio son titularidad de {site.nap.legalName} o cuentan con licencia de uso, y quedan protegidos por la normativa de propiedad intelectual e industrial.</p>
+    <h2>Responsabilidad</h2>
+    <p>El titular no se responsabiliza del mal uso de los contenidos ni de la información de sitios de terceros enlazados. Ante cualquier síntoma o urgencia, acude a tu médico, pediatra o a los servicios de urgencias.</p>
+    <h2>Legislación aplicable</h2>
+    <p>Las presentes condiciones se rigen por la legislación española.</p>
+    <p class="text-sm text-[var(--color-ink-muted)]"><em>Plantilla orientativa — revisar con asesoría legal antes de publicar en producción.</em></p>
+  </div>
+</BaseLayout>

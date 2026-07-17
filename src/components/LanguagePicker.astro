@@ -1,0 +1,57 @@
+---
+import Icon from './Icon.astro';
+import { defaultLang, enabledLocales, languages, type Lang } from '@i18n/config';
+import { useTranslations } from '@i18n/utils';
+
+/**
+ * Selector de idioma. Usa `Astro.currentLocale`-style: reconstruye la ruta
+ * equivalente cuando es posible. Para páginas con slug traducido, el mapa de
+ * alternates se pasa por props (`links`); si no, enlaza a la home del idioma.
+ */
+interface Props {
+  lang?: Lang;
+  /** rutas equivalentes por idioma (de los alternates de la página). */
+  links?: Partial<Record<Lang, string>>;
+}
+const { lang = defaultLang, links } = Astro.props;
+const t = useTranslations(lang);
+// Solo idiomas con contenido publicado (M3 activa CA/EN). Oculto si solo hay uno.
+const codes = (Object.keys(languages) as Lang[]).filter((c) => enabledLocales.includes(c));
+const homeFor = (l: Lang) => (l === defaultLang ? '/' : `/${l}/`);
+---
+
+{codes.length > 1 && (
+<div class="relative">
+  <details class="[&_summary::-webkit-details-marker]:hidden">
+    <summary
+      class="flex cursor-pointer list-none items-center gap-1 rounded-lg px-2 py-1.5 text-sm font-semibold text-[var(--color-ink-soft)]"
+      aria-label={t('a11y.langSelector')}
+    >
+      <Icon name="leaf" size={16} class="opacity-0 hidden" />
+      <span class="uppercase">{lang}</span>
+      <Icon name="chevron" size={14} class="rotate-90" />
+    </summary>
+    <ul class="absolute right-0 z-50 mt-1 min-w-[8rem] rounded-xl border border-[var(--color-sand)] bg-[var(--color-paper)] p-1 shadow-[var(--shadow-soft)]">
+      {
+        codes.map((code) => (
+          <li>
+            <a
+              href={links?.[code] ?? homeFor(code)}
+              hreflang={code}
+              class:list={[
+                'block rounded-lg px-3 py-2 text-sm no-underline',
+                code === lang
+                  ? 'bg-[var(--color-primary-50)] font-bold text-[var(--color-primary-700)]'
+                  : 'text-[var(--color-ink)] hover:bg-[var(--color-cream)]',
+              ]}
+              aria-current={code === lang ? 'true' : undefined}
+            >
+              {languages[code]}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </details>
+</div>
+)}
