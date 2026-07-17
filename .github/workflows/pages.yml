@@ -1,5 +1,7 @@
-# Preview provisional en GitHub Pages (PLAN §4). El deploy final a Hostinger
-# usará `.github/workflows/deploy.yml.disabled`. La preview lleva noindex.
+# Preview provisional en GitHub Pages (PLAN §4), método por rama `gh-pages`.
+# No usa la API de habilitación de Pages (que el token de integración no puede
+# invocar); publica el build en la rama `gh-pages` con el GITHUB_TOKEN.
+# El deploy final a Hostinger usará `.github/workflows/deploy.yml.disabled`.
 name: Deploy preview to GitHub Pages
 
 on:
@@ -10,16 +12,14 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: pages
+  group: pages-branch
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,27 +27,19 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Configure Pages
-        id: pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - run: npm ci
       - name: Build (sub-directory + noindex preview)
         env:
-          SITE_URL: ${{ steps.pages.outputs.origin }}
-          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          SITE_URL: https://ignaciofo-dotcom.github.io
+          BASE_PATH: /constanzaacevedo
         run: npm run build
-      - uses: actions/upload-pages-artifact@v3
+      - name: Disable Jekyll (serve _astro/ assets)
+        run: touch dist/.nojekyll
+      - name: Publish to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: dist
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          force_orphan: true
+          commit_message: "Deploy preview ${{ github.sha }}"
