@@ -16,6 +16,8 @@ petición del owner: subir todo a GitHub y publicar un **preview navegable** des
 4. «Me da este error (404 en la raíz github.io). ¿Puedes hacerlo con GitHub Actions?»
    → despliegue por rama `gh-pages` (auto-habilita Pages sin tocar ajustes). **Live.**
 5. «¿Dejaste un log de todo?» → este documento actualizado.
+6. «Crea dos entornos: Producción y Desarrollo (para probar antes de pasar a
+   producción).» → ramas `main`/`develop`, dos workflows y política de indexación.
 
 ## Decisiones / ajustes al plan
 1. **Repositorio único `constanzaacevedo`** (vacío) en lugar de crear `pagina-fisio-coty`.
@@ -65,6 +67,28 @@ petición del owner: subir todo a GitHub y publicar un **preview navegable** des
   con 403 —, por eso la verificación externa se apoya en el estado de GitHub, no en curl.)
 - Verificación local equivalente hecha antes del push: preview servido bajo
   `/constanzaacevedo/` con todas las páginas en 200 y click-through de navegación sin 4xx.
+
+## Entornos: Producción y Desarrollo
+Montados a petición del owner para poder probar antes de publicar.
+
+| Entorno | Rama | URL | Banner | Indexable |
+|---|---|---|---|---|
+| Desarrollo | `develop` | …/constanzaacevedo/**dev/** | Sí (rojo) | No, nunca |
+| Producción (preview) | `main` | …/constanzaacevedo/ | No | No (aún sin dominio) |
+| Producción (real) | `main` | https://constanzaacevedo.es | No | **Sí** |
+
+- **Aislamiento:** ambos comparten la rama `gh-pages` pero en rutas distintas
+  (producción en la raíz con `keep_files: true`, desarrollo en `destination_dir: dev`).
+  `concurrency: gh-pages-deploy` serializa los dos workflows para que no escriban a la vez.
+- **Política de indexación** (`src/config/env.ts`): **segura por defecto** — todo lleva
+  `noindex` + `robots.txt` bloqueado salvo el despliegue del dominio real, único que pone
+  `PUBLIC_ALLOW_INDEXING=true`. Evita que pruebas y preview compitan con el dominio real.
+- **Hostinger:** el job ya existe en `deploy-production.yml`, inactivo hasta definir los
+  secrets FTP **y** la variable de repo `HOSTINGER_ENABLED=true`.
+- **Local:** `npm run build:dev` / `npm run build:prod` reproducen cada entorno.
+- Verificado tras el despliegue clonando `gh-pages`: raíz sin banner y `dev/` con banner y
+  rutas `/constanzaacevedo/dev/…`; ambos runs en `success` y sin pisarse.
+- Sustituyen a `pages.yml` y `deploy.yml.disabled` (eliminados).
 
 ## Ramas y commits (repo ignaciofo-dotcom/constanzaacevedo)
 - `claude/connect-constanzaacevedo-repo-usunr7` (rama de trabajo):
