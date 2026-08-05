@@ -1,0 +1,19 @@
+---
+import { isDevelopment } from '@config/env';
+
+/**
+ * Aviso fijo en el entorno de DESARROLLO, para no confundirlo nunca con el
+ * sitio real. No se renderiza en producción (cero peso en el sitio final).
+ */
+---
+
+{
+  isDevelopment && (
+    <div
+      role="status"
+      class="sticky top-0 z-50 bg-[var(--color-accent-700)] px-3 py-1.5 text-center text-xs font-bold text-white"
+    >
+      ⚠️ ENTORNO DE PRUEBAS — esta no es la web real. Los cambios aquí no afectan a producción.
+    </div>
+  )
+}

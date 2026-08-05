@@ -7,7 +7,9 @@ import { site } from '@config/site';
 import { localeTag, ogLocale, defaultLang, type Lang } from '@i18n/config';
 import { useTranslations } from '@i18n/utils';
 import type { HreflangAlt } from '@lib/urls';
-import { withBase, isPreview } from '@lib/base';
+import { withBase } from '@lib/base';
+import { allowIndexing } from '@config/env';
+import EnvBanner from '@components/EnvBanner.astro';
 import { businessNode, personNode, websiteNode } from '@lib/schema';
 
 interface Props {
@@ -36,8 +38,8 @@ const t = useTranslations(lang);
 const siteUrl = Astro.site?.origin ?? 'https://constanzaacevedo.es';
 const canonical = new URL(Astro.url.pathname, siteUrl).href;
 const ogImageUrl = new URL(withBase(ogImage ?? '/og/default.png'), siteUrl).href;
-// El preview bajo subdirectorio (GitHub Pages) no debe indexarse.
-const robotsNoindex = noindex || isPreview;
+// Seguro por defecto: solo se indexa el despliegue del dominio real (§env.ts).
+const robotsNoindex = noindex || !allowIndexing;
 
 const graph = [
   businessNode(siteUrl),
@@ -94,6 +96,7 @@ const jsonLd = { '@context': 'https://schema.org', '@graph': graph };
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
   </head>
   <body>
+    <EnvBanner />
     <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-3 focus:rounded-lg focus:bg-[var(--color-primary-700)] focus:px-4 focus:py-2 focus:text-white">
       {t('a11y.skip')}
     </a>

@@ -1,0 +1,51 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# ENTORNO: DESARROLLO (pruebas antes de pasar a producción)
+# Rama `develop` → https://ignaciofo-dotcom.github.io/constanzaacevedo/dev/
+#
+# Se publica en el subdirectorio `dev/` de la misma rama gh-pages, así que
+# convive con producción sin pisarla. Lleva banner visible y nunca se indexa.
+# ─────────────────────────────────────────────────────────────────────────────
+name: Deploy · Development
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Serializa con el workflow de producción: ambos escriben en la rama gh-pages.
+concurrency:
+  group: gh-pages-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: GitHub Pages (subdirectorio /dev/)
+    runs-on: ubuntu-latest
+    environment:
+      name: development
+      url: https://ignaciofo-dotcom.github.io/constanzaacevedo/dev/
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build (desarrollo, banner + noindex)
+        env:
+          PUBLIC_APP_ENV: development
+          SITE_URL: https://ignaciofo-dotcom.github.io
+          BASE_PATH: /constanzaacevedo/dev
+        run: npm run build
+      - run: touch dist/.nojekyll
+      - name: Publish to gh-pages (dev/)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          destination_dir: dev
+          commit_message: "Deploy development ${{ github.sha }}"

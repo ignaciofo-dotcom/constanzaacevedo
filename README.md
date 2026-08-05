@@ -80,17 +80,60 @@ enlaces ni hreflang rotos. Para activar CA/EN:
 grep -rn "\[INPUT" src   # lista todo lo pendiente
 ```
 
-## Despliegue a Hostinger (preparado, desactivado)
+## Entornos (Producción y Desarrollo)
 
-El deploy final se conectará a **Hostinger** vía GitHub Actions. El workflow está en
-`.github/workflows/deploy.yml.disabled` (renómbralo a `deploy.yml` para activarlo) y
-requiere estos *secrets* en el repo:
+Dos entornos separados, cada uno con su rama y su URL. **Nunca se pisan**: producción se
+publica en la raíz de la rama `gh-pages` y desarrollo en su subdirectorio `dev/`.
 
-- `HOSTINGER_FTP_HOST`, `HOSTINGER_FTP_USER`, `HOSTINGER_FTP_PASSWORD`, `HOSTINGER_FTP_DIR`.
+| Entorno | Rama | URL | Banner | ¿Google lo indexa? |
+|---|---|---|---|---|
+| **Desarrollo** | `develop` | https://ignaciofo-dotcom.github.io/constanzaacevedo/dev/ | Sí, rojo | No, nunca |
+| **Producción** (preview) | `main` | https://ignaciofo-dotcom.github.io/constanzaacevedo/ | No | No (aún sin dominio) |
+| **Producción** (real) | `main` | https://constanzaacevedo.es | No | **Sí** |
 
-Al tocar DNS en el despliegue, configurar **SPF/DKIM/DMARC** del dominio para que los
-emails no caigan en spam (prerequisito de las integraciones de correo de Fase 2). Dar de
-alta el sitio en **Google Search Console** y **Bing Webmaster** y enviar el sitemap.
+### Flujo de trabajo recomendado
+
+```bash
+git checkout develop
+# …cambios…
+git commit -am "mi cambio" && git push      # → se publica solo en /dev/ para revisar
+
+# cuando el resultado convence:
+git checkout main && git merge develop && git push   # → pasa a producción
+```
+
+Ambos despliegues son automáticos (`.github/workflows/deploy-{development,production}.yml`)
+y comparten un `concurrency group`, así que nunca escriben a la vez en `gh-pages`.
+
+### Política de indexación (importante para SEO)
+
+Está en `src/config/env.ts` y es **segura por defecto**: todo lleva `noindex` y un
+`robots.txt` que bloquea el rastreo, **salvo** el despliegue del dominio real, que es el
+único que pone `PUBLIC_ALLOW_INDEXING=true`. Así ni el entorno de pruebas ni la preview de
+GitHub Pages compiten en Google con `constanzaacevedo.es` (contenido duplicado).
+
+### Activar el despliegue a Hostinger (dominio real)
+
+El job ya está escrito en `deploy-production.yml`, desactivado hasta que lo habilites:
+
+1. Añade los *secrets* del repo (Settings → Secrets and variables → Actions → Secrets):
+   `HOSTINGER_FTP_HOST`, `HOSTINGER_FTP_USER`, `HOSTINGER_FTP_PASSWORD`,
+   `HOSTINGER_FTP_DIR` y (opcional) `WEB3FORMS_KEY`.
+2. Añade la *variable* `HOSTINGER_ENABLED` = `true` (pestaña Variables, no Secrets).
+3. El siguiente push a `main` desplegará al dominio, ya indexable.
+
+Al tocar DNS, configurar **SPF/DKIM/DMARC** del dominio para que los emails no caigan en
+spam (prerequisito de las integraciones de correo de Fase 2). Dar de alta el sitio en
+**Google Search Console** y **Bing Webmaster** y enviar el sitemap.
+
+### Probar los entornos en local
+
+```bash
+npm run dev                 # desarrollo (banner visible)
+npm run build:dev           # build igual que el entorno de desarrollo
+npm run build:prod          # build igual que producción en el dominio real
+npm run preview             # sirve el último dist/
+```
 
 ## Phase 2 runway (no construir ahora; no bloquear después)
 

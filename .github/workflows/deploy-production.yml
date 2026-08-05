@@ -1,0 +1,89 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# ENTORNO: PRODUCCIÓN
+# Rama `main` → sitio público.
+#
+# Publica en dos destinos:
+#   1. GitHub Pages (raíz):  https://ignaciofo-dotcom.github.io/constanzaacevedo/
+#      Preview estable de producción mientras no haya dominio. NO indexable.
+#   2. Hostinger (dominio real): se activa solo cuando existen los secrets FTP.
+#      Ese despliegue SÍ es indexable (PUBLIC_ALLOW_INDEXING=true).
+# ─────────────────────────────────────────────────────────────────────────────
+name: Deploy · Production
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Serializa con el workflow de desarrollo: ambos escriben en la rama gh-pages.
+concurrency:
+  group: gh-pages-deploy
+  cancel-in-progress: false
+
+jobs:
+  pages:
+    name: GitHub Pages (preview de producción)
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://ignaciofo-dotcom.github.io/constanzaacevedo/
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build (producción, sin indexar en Pages)
+        env:
+          PUBLIC_APP_ENV: production
+          SITE_URL: https://ignaciofo-dotcom.github.io
+          BASE_PATH: /constanzaacevedo
+        run: npm run build
+      - run: touch dist/.nojekyll
+      - name: Publish to gh-pages (root)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+          destination_dir: .
+          # Conserva el subdirectorio dev/ del entorno de desarrollo.
+          keep_files: true
+          commit_message: "Deploy production ${{ github.sha }}"
+
+  hostinger:
+    name: Hostinger (dominio real)
+    runs-on: ubuntu-latest
+    needs: pages
+    # Solo se ejecuta cuando el owner ha configurado los secrets FTP.
+    if: vars.HOSTINGER_ENABLED == 'true'
+    environment:
+      name: production-domain
+      url: https://constanzaacevedo.es
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build (dominio real, indexable)
+        env:
+          PUBLIC_APP_ENV: production
+          PUBLIC_ALLOW_INDEXING: 'true'
+          SITE_URL: https://constanzaacevedo.es
+          BASE_PATH: /
+          PUBLIC_WEB3FORMS_KEY: ${{ secrets.WEB3FORMS_KEY }}
+        run: npm run build
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.HOSTINGER_FTP_HOST }}
+          username: ${{ secrets.HOSTINGER_FTP_USER }}
+          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: ${{ secrets.HOSTINGER_FTP_DIR }}

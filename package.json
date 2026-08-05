@@ -7,6 +7,8 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro check && astro build",
+    "build:dev": "PUBLIC_APP_ENV=development SITE_URL=https://ignaciofo-dotcom.github.io BASE_PATH=/constanzaacevedo/dev astro build",
+    "build:prod": "PUBLIC_APP_ENV=production PUBLIC_ALLOW_INDEXING=true SITE_URL=https://constanzaacevedo.es BASE_PATH=/ astro build",
     "preview": "astro preview",
     "astro": "astro",
     "format": "prettier --write \"src/**/*.{astro,ts,js,md,css}\"",
