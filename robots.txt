@@ -1,4 +1,3 @@
+# Entorno no productivo: rastreo bloqueado a propósito.
 User-agent: *
-Allow: /
-
-Sitemap: https://ignaciofo-dotcom.github.io/sitemap-index.xml
+Disallow: /
