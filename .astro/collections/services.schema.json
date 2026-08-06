@@ -1,0 +1,124 @@
+{
+  "$ref": "#/definitions/services",
+  "definitions": {
+    "services": {
+      "type": "object",
+      "properties": {
+        "serviceKey": {
+          "type": "string",
+          "enum": [
+            "fisio-pediatrica",
+            "fisio-respiratoria",
+            "acupuntura-mujer",
+            "acupuntura-fertilidad-embarazo",
+            "acupuntura-menopausia",
+            "masaje-infantil",
+            "domicilios"
+          ]
+        },
+        "lang": {
+          "type": "string",
+          "enum": [
+            "es",
+            "ca",
+            "en"
+          ]
+        },
+        "slug": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "metaTitle": {
+          "type": "string",
+          "maxLength": 65
+        },
+        "metaDescription": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "summary": {
+          "type": "string"
+        },
+        "audience": {
+          "type": "string",
+          "enum": [
+            "child",
+            "woman"
+          ]
+        },
+        "icon": {
+          "type": "string",
+          "default": "leaf"
+        },
+        "order": {
+          "type": "number",
+          "default": 0
+        },
+        "parent": {
+          "type": "string",
+          "enum": [
+            "acupuntura-mujer"
+          ]
+        },
+        "heroImage": {
+          "type": "string"
+        },
+        "heroImageAlt": {
+          "type": "string"
+        },
+        "whatsappMessage": {
+          "type": "string"
+        },
+        "ctaLabel": {
+          "type": "string"
+        },
+        "faqs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "q": {
+                "type": "string"
+              },
+              "a": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "q",
+              "a"
+            ],
+            "additionalProperties": false
+          },
+          "default": []
+        },
+        "featuredOnHome": {
+          "type": "boolean",
+          "default": false
+        },
+        "draft": {
+          "type": "boolean",
+          "default": false
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "serviceKey",
+        "lang",
+        "slug",
+        "title",
+        "metaTitle",
+        "metaDescription",
+        "summary",
+        "audience",
+        "whatsappMessage"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
