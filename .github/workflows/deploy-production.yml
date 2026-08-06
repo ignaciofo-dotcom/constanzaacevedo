@@ -55,20 +55,8 @@ jobs:
           keep_files: true
           commit_message: "Deploy production ${{ github.sha }}"
 
-  # La environment `github-pages` solo permite despliegues desde la rama
-  # gh-pages, así que el publish al CDN corre ALLÍ (publish-pages.yml, que vive
-  # en gh-pages) y aquí solo se lanza por workflow_dispatch.
-  publish-cdn:
-    name: Publish to Pages CDN
-    runs-on: ubuntu-latest
-    needs: pages
-    permissions:
-      actions: write
-    steps:
-      - name: Dispatch publish on gh-pages
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh workflow run publish-pages.yml --repo "$GITHUB_REPOSITORY" --ref gh-pages
+  # Nota: Pages sirve desde la rama `gh-pages` («Deploy from a branch»).
+  # GitHub publica solo al hacer push a esa rama; no hace falta paso extra.
 
   hostinger:
     name: Hostinger (dominio real)
