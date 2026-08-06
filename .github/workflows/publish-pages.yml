@@ -1,0 +1,32 @@
+# Publica el contenido de ESTA rama (gh-pages: raíz producción + dev/) al CDN
+# de GitHub Pages vía la API oficial. Vive en gh-pages a propósito: la
+# environment `github-pages` solo permite despliegues desde esta rama.
+# Se lanza por workflow_dispatch desde los workflows de deploy (o a mano).
+name: Publish branch to Pages CDN
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-cdn
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: rm -rf .git
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4
