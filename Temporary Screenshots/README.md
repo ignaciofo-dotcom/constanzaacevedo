@@ -15,15 +15,9 @@ git rm -r "Temporary Screenshots" && git commit -m "Remove temporary screenshots
 
 ## `sitio-anterior/` — constanzaacevedo.es antes del rediseño
 
-⚠️ **Pendiente de subir los archivos.** Las capturas están revisadas y descritas abajo,
-pero los PNG **no se pudieron añadir automáticamente**: desde el entorno de desarrollo el
-proxy bloquea el acceso a `constanzaacevedo.es`, así que no se pueden capturar de nuevo.
+✅ **Capturas subidas por el owner (06/08/2026)** vía la web de GitHub y renombradas.
 
-**Cómo subirlas (2 minutos, sin usar git):** abrir
-[`Temporary Screenshots/sitio-anterior/`](https://github.com/ignaciofo-dotcom/constanzaacevedo/tree/main/Temporary%20Screenshots/sitio-anterior)
-en GitHub → **Add file** → **Upload files** → arrastrar los 5 PNG → **Commit changes**.
-
-| Archivo sugerido | Qué muestra |
+| Archivo | Qué muestra |
 |---|---|
 | `anterior-home.png` | Home completa: hero «HAGO FISIOTERAPIA INTEGRATIVA», «QUIÉN SOY…», métricas, 5 tarjetas de servicios, «DÓNDE ENCONTRARME», formulario «AÚN TIENES DUDAS?» y CTA final. |
 | `anterior-quien-soy.png` | «Sobre mi…»: historia personal (celiaquía, APLV del hijo) + «Estudios y Certificaciones». |
