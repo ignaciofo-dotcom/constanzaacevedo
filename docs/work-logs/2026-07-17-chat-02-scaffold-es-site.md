@@ -98,6 +98,30 @@ Montados a petición del owner para poder probar antes de publicar.
 - `gh-pages`: salida `dist/` publicada (la sirve GitHub Pages). No editar a mano.
 - Lanzamiento final: `.github/workflows/deploy.yml.disabled` (Hostinger, base `/`).
 
+## Reposicionamiento pediátrico + retheme (2026-08-06, decisión del owner)
+El owner redefine el foco: **fisioterapia pediátrica como línea principal; la acupuntura
+se conserva íntegra pero pasa a secundaria** (cambia el peso equilibrado del PLAN v1.1 §1).
+Estética: volver al look del sitio anterior (verde fresco + azul claro + footer gris
+oscuro, pills redondeados), corrigiendo su contraste a WCAG AA. Se mantienen los
+tecnicismos clínicos en el copy (petición expresa del owner).
+
+- **Retheme** (`global.css @theme`): verde de marca (#8bbf35, CTAs vivos con texto oscuro
+  para AA), azul claro para titulares de sección en mayúsculas (`.section-title`) y CTA
+  «Pedir cita», footer oscuro (#43474b), Quicksand (display) + Nunito Sans (cuerpo).
+  Icono de manita (eco del logo anterior) en header/footer/favicon `[INPUT: logo real]`.
+- **Home nueva, orientada a citas:** hero pediátrico (H1 «Fisioterapia pediátrica en
+  Barcelona») con doble CTA (WhatsApp verde + Pedir cita azul) y horario visible → métricas
+  (tarjetas blancas sobre verde, como el sitio anterior) → 4 servicios pediátricos →
+  **«Tu primera visita, paso a paso»** (nuevo, reduce fricción) → quién soy → **banda azul
+  secundaria de acupuntura** (3 enlaces) → testimonios → guías → dónde → FAQ → «Agenda tu
+  visita hoy».
+- **Hub de servicios:** pediatría primero como «corazón de la consulta»; acupuntura como
+  línea complementaria. URLs sin cambios (sin impacto SEO negativo); las 3 páginas de
+  acupuntura se conservan íntegras con su copy sensible.
+- Metas/OG actualizados al nuevo foco. MetricStrip/CtaWhatsApp/Footer/ServiceCard
+  restilizados. EnvBanner fijado en rojo (independiente de la paleta).
+- Verificado: build verde, `astro check` 0 errores, capturas desktop/móvil OK.
+
 ## Pendiente (siguiente chat)
 - M3: traducciones CA (barceloní) + EN y sus páginas; activar `enabledLocales`.
 - Guías 3–7 (§6.9). Textos legales en CA/EN. Tabla de hitos motores como guía dedicada.

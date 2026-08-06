@@ -4,7 +4,9 @@ import { defaultLang, type Lang } from '@i18n/config';
 import { useTranslations } from '@i18n/utils';
 
 /**
- * Franja de confianza con métricas coherentes (PLAN §2.12, §6.1).
+ * Franja de confianza (PLAN §2.12, §6.1): tarjetas blancas sobre el verde de
+ * marca — el mismo patrón visual que las métricas del sitio anterior, con
+ * contraste AA (texto oscuro dentro de las tarjetas).
  * +15 años de experiencia · +5.000 horas clínicas · nº familias [INPUT].
  */
 interface Props {
@@ -23,13 +25,15 @@ const metrics = [
 ];
 ---
 
-<section class="bg-[var(--color-primary-700)] text-white">
-  <div class="container-page grid grid-cols-3 gap-4 py-8 text-center">
+<section class="bg-[var(--color-primary-500)]">
+  <div class="container-page grid grid-cols-3 gap-3 py-8 sm:gap-5">
     {
       metrics.map((m) => (
-        <div>
-          <div class="font-[var(--font-display)] text-2xl font-semibold sm:text-4xl">{m.value}</div>
-          <div class="mt-1 text-xs text-[var(--color-primary-100)] sm:text-sm">{m.label}</div>
+        <div class="rounded-2xl bg-white px-2 py-4 text-center shadow-[var(--shadow-soft)] sm:py-5">
+          <div class="font-[var(--font-display)] text-2xl font-bold text-[var(--color-primary-700)] sm:text-4xl">
+            {m.value}
+          </div>
+          <div class="mt-1 text-xs text-[var(--color-ink-soft)] sm:text-sm">{m.label}</div>
         </div>
       ))
     }

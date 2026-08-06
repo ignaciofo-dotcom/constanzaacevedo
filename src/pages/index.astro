@@ -9,25 +9,53 @@ import Icon from '@components/Icon.astro';
 import { site } from '@config/site';
 import { routes } from '@i18n/config';
 import { useTranslations } from '@i18n/utils';
-import { getServices, getTestimonials, getGlobalFaqs } from '@lib/content';
-import { serviceUrl, whatsappUrl, hreflangForRoute } from '@lib/urls';
+import { getServices, getGuides, getTestimonials, getGlobalFaqs } from '@lib/content';
+import { serviceUrl, guideUrl, whatsappUrl, hreflangForRoute } from '@lib/urls';
 import { faqNode } from '@lib/schema';
 
+/**
+ * Home reposicionada (decisión del owner, 2026-08): fisioterapia pediátrica
+ * como foco principal — la acupuntura de la mujer se mantiene íntegra pero
+ * como línea secundaria. Estructura orientada a conversión (pedir cita):
+ * hero con CTA → confianza → servicios pediátricos → primera visita →
+ * quién soy → acupuntura → testimonios → guías → dónde → FAQ → CTA final.
+ */
 const lang = 'es' as const;
 const t = useTranslations(lang);
 
 const services = await getServices(lang);
-const featured = services.filter((s) => s.data.featuredOnHome);
+const childServices = services.filter((s) => s.data.audience === 'child');
+const womanServices = services.filter((s) => s.data.audience === 'woman');
+const acupunctureHub = womanServices.find((s) => s.data.serviceKey === 'acupuntura-mujer');
+const guides = (await getGuides(lang)).slice(0, 2);
 const testimonials = await getTestimonials(lang);
 const faqs = (await getGlobalFaqs(lang)).slice(0, 4);
 const alternates = hreflangForRoute('home');
 
-const childServices = services.filter((s) => s.data.audience === 'child');
-const womanServices = services.filter((s) => s.data.audience === 'woman');
+const heroWa =
+  'Hola Constanza, quiero pedir cita de fisioterapia para mi peque. Edad: … Motivo: …';
 
-const title = 'Fisioterapia pediátrica y acupuntura para la mujer en Barcelona | Constanza Acevedo';
+const steps = [
+  {
+    icon: 'whatsapp',
+    title: '1 · Escríbeme',
+    text: 'Por WhatsApp, cuéntame la edad de tu peque y qué te preocupa. Te propongo día y hora.',
+  },
+  {
+    icon: 'baby',
+    title: '2 · Valoración sin prisas',
+    text: 'Exploro a tu bebé con juego y técnicas suaves, y te explico qué veo con palabras claras.',
+  },
+  {
+    icon: 'home',
+    title: '3 · Plan y pautas para casa',
+    text: 'Te llevas un plan realista y ejercicios sencillos: el progreso continúa entre sesiones.',
+  },
+];
+
+const title = 'Fisioterapia pediátrica en Barcelona | Constanza Acevedo';
 const description =
-  'Fisioterapia pediátrica y respiratoria para tu bebé y acupuntura para tu salud, en Barcelona. Colegiada 18641, +15 años de experiencia. Escríbeme por WhatsApp.';
+  'Fisioterapia pediátrica y respiratoria en Barcelona: plagiocefalia, tortícolis, bronquiolitis e hitos motores. En consulta (Camp de l\'Arpa) o a domicilio. Pide cita por WhatsApp.';
 ---
 
 <BaseLayout
@@ -39,37 +67,41 @@ const description =
 >
   <!-- Hero -->
   <section class="relative overflow-hidden">
-    <div class="container-page grid items-center gap-10 py-14 md:grid-cols-2 md:py-20">
+    <div class="container-page grid items-center gap-10 py-12 md:grid-cols-2 md:py-18">
       <div>
         <p class="inline-flex items-center gap-2 rounded-full bg-[var(--color-primary-100)] px-3 py-1 text-xs font-bold text-[var(--color-primary-700)]">
-          <Icon name="leaf" size={14} /> Col. {site.person.collegiateNumber} · +{site.metrics.yearsExperience} años · Barcelona
+          <Icon name="hand" size={14} /> Col. {site.person.collegiateNumber} · +{site.metrics.yearsExperience} años de experiencia
         </p>
         <h1 class="mt-4 text-4xl sm:text-5xl">
-          Fisioterapia pediátrica y acupuntura para la mujer en Barcelona
+          Fisioterapia pediátrica en <span class="text-[var(--color-primary-600)]">Barcelona</span>
         </h1>
         <p class="mt-4 max-w-lg text-lg text-[var(--color-ink-soft)]">
-          Cuido el desarrollo y la respiración de tu bebé, y te acompaño a ti en tu salud —fertilidad,
-          embarazo, ciclo y menopausia— desde la evidencia y la cercanía.
+          Acompaño el desarrollo motor y la respiración de tu bebé — plagiocefalia, tortícolis,
+          bronquiolitis, hitos motores — con una mirada integrativa, técnicas suaves y evidencia.
+          En consulta (Camp de l'Arpa) o en tu casa.
         </p>
         <div class="mt-7 flex flex-col gap-3 sm:flex-row">
           <a
-            href={whatsappUrl(t('wa.default'))}
+            href={whatsappUrl(heroWa)}
             data-analytics="wa-click"
-            class="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-accent-600)] px-6 py-3 font-bold text-white no-underline hover:bg-[var(--color-accent-700)]"
+            class="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-primary-400)] px-6 py-3.5 font-bold text-[var(--color-primary-900)] no-underline shadow-[var(--shadow-soft)] hover:bg-[var(--color-primary-300)]"
           >
-            <Icon name="whatsapp" size={22} /> {t('cta.whatsapp')}
+            <Icon name="whatsapp" size={22} /> Escríbeme por WhatsApp
           </a>
           <a
-            href={routes.services[lang]}
-            class="inline-flex items-center justify-center gap-2 rounded-full border border-[var(--color-primary-300)] px-6 py-3 font-bold text-[var(--color-primary-700)] no-underline hover:bg-[var(--color-primary-50)]"
+            href={routes.book[lang]}
+            class="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--color-accent-600)] px-6 py-3.5 font-bold text-white no-underline hover:bg-[var(--color-accent-700)]"
           >
-            {t('cta.seeServices')}
+            {t('cta.book')}
           </a>
         </div>
+        <p class="mt-3 text-sm text-[var(--color-ink-muted)]">
+          Lunes 16:00–20:30 · Viernes 10:00–13:00 · Domicilios en Barcelona
+        </p>
       </div>
       <div class="relative">
-        <div class="aspect-[4/5] w-full overflow-hidden rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-[var(--color-sand)]">
-          <!-- [INPUT ★: foto real de Coty en consulta] -->
+        <div class="aspect-[4/5] w-full overflow-hidden rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-[var(--color-primary-50)]">
+          <!-- [INPUT ★: foto real de Coty en consulta con un bebé] -->
           <div class="flex h-full w-full items-center justify-center text-center text-sm text-[var(--color-ink-muted)]">
             [INPUT] Foto real de Constanza en consulta (4:5)
           </div>
@@ -78,56 +110,24 @@ const description =
     </div>
   </section>
 
-  <!-- Doble camino -->
-  <section class="container-page py-6">
-    <div class="grid gap-5 md:grid-cols-2">
-      <a
-        href={serviceUrl(childServices[0]?.data.slug ?? '', lang)}
-        class="group relative overflow-hidden rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-[var(--color-primary-50)] p-8 no-underline"
-      >
-        <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-primary-100)] text-[var(--color-primary-700)]">
-          <Icon name="baby" size={26} />
-        </span>
-        <h2 class="mt-4 text-2xl text-[var(--color-primary-800)]">{t('label.forChild')}</h2>
-        <p class="mt-2 text-[var(--color-ink-soft)]">
-          Fisioterapia pediátrica y respiratoria, masaje infantil y visitas a domicilio.
-        </p>
-        <span class="mt-4 inline-flex items-center gap-1 font-bold text-[var(--color-primary-700)] group-hover:gap-2">
-          {t('cta.seeMore')} <Icon name="chevron" size={16} />
-        </span>
-      </a>
-      <a
-        href={serviceUrl(womanServices[0]?.data.slug ?? '', lang)}
-        class="group relative overflow-hidden rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-[var(--color-accent-100)] p-8 no-underline"
-      >
-        <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-accent-100)] text-[var(--color-accent-700)] ring-1 ring-[var(--color-accent-300)]">
-          <Icon name="flower" size={26} />
-        </span>
-        <h2 class="mt-4 text-2xl text-[var(--color-accent-700)]">{t('label.forYou')}</h2>
-        <p class="mt-2 text-[var(--color-ink-soft)]">
-          Acupuntura para tu salud: fertilidad, embarazo, ciclo menstrual y menopausia.
-        </p>
-        <span class="mt-4 inline-flex items-center gap-1 font-bold text-[var(--color-accent-700)] group-hover:gap-2">
-          {t('cta.seeMore')} <Icon name="chevron" size={16} />
-        </span>
-      </a>
-    </div>
-  </section>
+  <MetricStrip lang={lang} />
 
-  <div class="mt-10"><MetricStrip lang={lang} /></div>
-
-  <!-- Servicios -->
+  <!-- Servicios pediátricos: el corazón de la consulta -->
   <section class="container-page py-14">
-    <h2 class="text-3xl">Servicios</h2>
-    <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <h2 class="section-title text-2xl sm:text-3xl">¿Cómo puedo ayudar a tu peque?</h2>
+    <p class="mt-3 max-w-2xl text-[var(--color-ink-soft)]">
+      Del control cefálico a la marcha, y de los mocos que no dejan dormir a las bronquiolitis de
+      cada invierno: valoración, tratamiento y pautas claras para casa.
+    </p>
+    <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
       {
-        featured.map((s) => (
+        childServices.map((s) => (
           <ServiceCard
             href={serviceUrl(s.data.slug, lang)}
             title={s.data.title}
             summary={s.data.summary}
             icon={s.data.icon}
-            audience={s.data.audience}
+            audience="child"
             lang={lang}
           />
         ))
@@ -135,21 +135,51 @@ const description =
     </div>
   </section>
 
+  <!-- Primera visita, paso a paso (reduce fricción → más citas) -->
+  <section class="bg-[var(--color-primary-50)]">
+    <div class="container-page py-14">
+      <h2 class="section-title text-2xl sm:text-3xl">Tu primera visita, paso a paso</h2>
+      <div class="mt-8 grid gap-5 md:grid-cols-3">
+        {
+          steps.map((step) => (
+            <div class="rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-white p-6">
+              <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-primary-100)] text-[var(--color-primary-700)]">
+                <Icon name={step.icon} size={26} />
+              </span>
+              <h3 class="mt-4 text-lg text-[var(--color-primary-700)]">{step.title}</h3>
+              <p class="mt-2 text-sm text-[var(--color-ink-soft)]">{step.text}</p>
+            </div>
+          ))
+        }
+      </div>
+      <div class="mt-8 text-center">
+        <a
+          href={whatsappUrl(heroWa)}
+          data-analytics="wa-click"
+          class="inline-flex items-center gap-2 rounded-full bg-[var(--color-primary-400)] px-6 py-3 font-bold text-[var(--color-primary-900)] no-underline shadow-[var(--shadow-soft)] hover:bg-[var(--color-primary-300)]"
+        >
+          <Icon name="whatsapp" size={20} /> Pedir cita para mi peque
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- Quién soy resumido -->
-  <section class="bg-[var(--color-sand)]/40">
-    <div class="container-page grid items-center gap-8 py-14 md:grid-cols-[2fr_3fr]">
-      <div class="aspect-square overflow-hidden rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-[var(--color-sand)]">
+  <section class="container-page">
+    <div class="grid items-center gap-8 py-14 md:grid-cols-[2fr_3fr]">
+      <div class="aspect-square overflow-hidden rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-[var(--color-primary-50)]">
         <div class="flex h-full items-center justify-center text-center text-sm text-[var(--color-ink-muted)]">
           [INPUT] Foto de Constanza
         </div>
       </div>
       <div>
-        <h2 class="text-3xl">Hola, soy Coty</h2>
+        <h2 class="section-title text-2xl sm:text-3xl">Quién soy</h2>
         <p class="mt-4 text-[var(--color-ink-soft)]">
-          Fisioterapeuta (2010) y acupuntora, colegiada 18641 del Col·legi de Fisioterapeutes de
-          Catalunya, con más de 15 años de experiencia entre atención primaria, hospital y desarrollo
-          infantil. Soy mamá de Esteban y Bastián, celíaca y con un hijo con alergia alimentaria: sé
-          lo que es mirar la salud de tu familia desde la preocupación.
+          Soy Coty: fisioterapeuta desde 2010 y acupuntora desde 2019, colegiada
+          {site.person.collegiateNumber} del Col·legi de Fisioterapeutes de Catalunya, con más de 15
+          años entre atención primaria, hospital y desarrollo infantil. Soy mamá de Esteban y
+          Bastián, celíaca y con un hijo con APLV: sé lo que es mirar la salud de tu peque desde la
+          preocupación, y por eso cuido tanto el acompañamiento como la técnica.
         </p>
         <a
           href={routes.about[lang]}
@@ -161,9 +191,43 @@ const description =
     </div>
   </section>
 
+  <!-- Acupuntura: línea secundaria, con su propio espacio -->
+  <section class="bg-[var(--color-accent-100)]">
+    <div class="container-page py-12">
+      <div class="md:flex md:items-start md:justify-between md:gap-10">
+        <div class="max-w-xl">
+          <h2 class="section-title text-2xl text-[var(--color-accent-700)]">Y también un espacio para ti</h2>
+          <p class="mt-3 text-[var(--color-ink-soft)]">
+            <strong>Acupuntura para la mujer</strong>, desde la Medicina Tradicional China y con
+            criterio clínico: salud menstrual (dismenorrea, SOP), fertilidad y reproducción
+            asistida, embarazo —versión podálica con moxibustión, preparación al parto— y
+            menopausia. Siempre como complemento de tu seguimiento médico, nunca como sustituto.
+          </p>
+        </div>
+        <div class="mt-6 flex flex-col gap-2 md:mt-1 md:w-72 md:shrink-0">
+          {
+            womanServices.map((s) => (
+              <a
+                href={serviceUrl(s.data.slug, lang)}
+                class="flex items-center justify-between rounded-full border border-[var(--color-accent-300)] bg-white px-5 py-2.5 text-sm font-bold text-[var(--color-accent-700)] no-underline hover:bg-[var(--color-accent-100)]"
+              >
+                {s.data.serviceKey === 'acupuntura-mujer'
+                  ? 'Acupuntura de la mujer'
+                  : s.data.serviceKey === 'acupuntura-fertilidad-embarazo'
+                    ? 'Fertilidad y embarazo'
+                    : 'Menopausia'}
+                <Icon name="chevron" size={16} />
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Testimonios -->
   <section class="container-page py-14">
-    <h2 class="text-3xl">Lo que dicen las familias y las pacientes</h2>
+    <h2 class="section-title text-2xl sm:text-3xl">Lo que dicen las familias</h2>
     <p class="mt-2 text-sm text-[var(--color-ink-muted)]">
       [INPUT] Reseñas reales de Google / Doctoralia (con permiso).
     </p>
@@ -172,11 +236,34 @@ const description =
     </div>
   </section>
 
+  <!-- Guías (SEO + valor para familias) -->
+  {
+    guides.length > 0 && (
+      <section class="container-page pb-4">
+        <h2 class="section-title text-2xl">Guías para familias</h2>
+        <div class="mt-6 grid gap-5 sm:grid-cols-2">
+          {guides.map((g) => (
+            <a
+              href={guideUrl(g.data.slug, lang)}
+              class="group rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-white p-6 no-underline shadow-[var(--shadow-soft)]"
+            >
+              <h3 class="text-lg text-[var(--color-primary-700)] group-hover:underline">{g.data.title}</h3>
+              <p class="mt-2 text-sm text-[var(--color-ink-soft)]">{g.data.summary}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
   <!-- Dónde -->
-  <section class="container-page pb-6">
-    <div class="grid gap-5 md:grid-cols-2">
-      <div class="rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-[var(--color-surface)] p-6">
-        <h2 class="flex items-center gap-2 text-xl"><Icon name="pin" size={22} class="text-[var(--color-primary-600)]" /> Centro Llevadonas</h2>
+  <section class="container-page py-14">
+    <h2 class="section-title text-2xl sm:text-3xl">Dónde encontrarme</h2>
+    <div class="mt-6 grid gap-5 md:grid-cols-2">
+      <div class="rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-white p-6">
+        <h3 class="flex items-center gap-2 text-xl text-[var(--color-primary-700)]">
+          <Icon name="pin" size={22} class="text-[var(--color-primary-600)]" /> Centro Llevadonas
+        </h3>
         <p class="mt-2 text-[var(--color-ink-soft)]">
           C. de la Independència 371, Baixos · 08026 Barcelona<br />Camp de l'Arpa · Sant Martí
         </p>
@@ -184,8 +271,10 @@ const description =
           {t('label.howToArrive')} →
         </a>
       </div>
-      <div class="rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-[var(--color-surface)] p-6">
-        <h2 class="flex items-center gap-2 text-xl"><Icon name="home" size={22} class="text-[var(--color-primary-600)]" /> {t('label.homeVisits')}</h2>
+      <div class="rounded-[var(--radius-2xl)] border border-[var(--color-sand)] bg-white p-6">
+        <h3 class="flex items-center gap-2 text-xl text-[var(--color-primary-700)]">
+          <Icon name="home" size={22} class="text-[var(--color-primary-600)]" /> {t('label.homeVisits')}
+        </h3>
         <p class="mt-2 text-[var(--color-ink-soft)]">
           Llevo la fisioterapia a tu casa cuando salir con el bebé se complica: recién nacidos,
           bronquiolitis o familias sin desplazamiento fácil.
@@ -199,6 +288,11 @@ const description =
   </div>
 
   <div class="container-page">
-    <CtaWhatsApp message={t('wa.default')} lang={lang} />
+    <CtaWhatsApp
+      message={heroWa}
+      heading="Agenda tu visita hoy"
+      text="Cuéntame qué le pasa a tu peque y lo vemos con calma, sin compromiso."
+      lang={lang}
+    />
   </div>
 </BaseLayout>

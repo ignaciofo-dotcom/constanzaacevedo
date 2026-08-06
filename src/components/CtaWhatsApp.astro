@@ -6,6 +6,8 @@ import { whatsappUrl } from '@lib/urls';
 
 /**
  * Bloque CTA de WhatsApp con mensaje precargado contextual (PLAN §6).
+ * Banda verde de marca (eco del «AGENDA TU VISITA HOY» del sitio anterior),
+ * con texto oscuro para cumplir AA.
  */
 interface Props {
   message: string;
@@ -19,14 +21,16 @@ const t = useTranslations(lang);
 ---
 
 <section class="mt-14">
-  <div class="rounded-[var(--radius-2xl)] bg-[var(--color-primary-700)] px-6 py-10 text-center text-white sm:px-10">
-    <h2 class="text-2xl text-white sm:text-3xl">{heading ?? t('cta.bookVisit')}</h2>
-    {text && <p class="mx-auto mt-3 max-w-xl text-[var(--color-primary-100)]">{text}</p>}
+  <div class="rounded-[var(--radius-2xl)] bg-[var(--color-primary-500)] px-6 py-10 text-center sm:px-10">
+    <h2 class="section-title text-2xl text-[var(--color-primary-900)] sm:text-3xl">
+      {heading ?? t('cta.bookVisit')}
+    </h2>
+    {text && <p class="mx-auto mt-3 max-w-xl text-[var(--color-primary-900)]">{text}</p>}
     <div class="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
       <a
         href={whatsappUrl(message)}
         data-analytics="wa-click"
-        class="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 font-bold text-[var(--color-primary-800)] no-underline hover:bg-[var(--color-cream)]"
+        class="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 font-bold text-[var(--color-primary-800)] no-underline shadow-[var(--shadow-soft)] hover:bg-[var(--color-primary-50)]"
       >
         <Icon name="whatsapp" size={22} />
         {label ?? t('cta.whatsapp')}

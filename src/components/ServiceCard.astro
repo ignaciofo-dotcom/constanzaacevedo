@@ -30,7 +30,14 @@ const t = useTranslations(lang);
   >
     <Icon name={icon} size={26} />
   </span>
-  <h3 class="mt-4 text-xl">{title}</h3>
+  <h3
+    class:list={[
+      'mt-4 text-xl',
+      audience === 'woman' ? 'text-[var(--color-accent-700)]' : 'text-[var(--color-primary-700)]',
+    ]}
+  >
+    {title}
+  </h3>
   <p class="mt-2 flex-1 text-sm text-[var(--color-ink-soft)]">{summary}</p>
   <a
     href={href}
